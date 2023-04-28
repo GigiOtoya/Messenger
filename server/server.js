@@ -22,7 +22,10 @@ io.on('connection', (socket) => {
     
     socket.on('message', (msg) => {
         console.log(msg);
-        io.emit('message', msg);
+        const dt = new Date();
+        const time = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+        const chatObj = {message : msg, time : time}
+        io.emit('chat', chatObj);
     });
 
 });

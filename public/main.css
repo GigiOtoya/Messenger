@@ -37,7 +37,7 @@ body {
     margin: auto;
     box-sizing: border-box;
     padding: 30px;
-    width: 1264px;
+    width: 800px;
     max-width: 100%;
     position: relative;
 }
@@ -47,6 +47,25 @@ body {
     background-color: rgb(16, 16, 16);
     color: white;
     border-radius: 5px;
+    padding-left: 0;
+}
+
+.items li {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(23, 29, 43);
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.message-header {
+    padding: 5px;
+}
+
+.message-body {
+    color: white;
+    word-wrap: break-word;
+    padding: 5px;
 }
 
 .text-container {

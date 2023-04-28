@@ -15,13 +15,24 @@
     });
 
     // retrieve message from server
-    socket.on("message", (msg) => {
-        console.log(msg);
+    socket.on("chat", (chatObj) => {
+        // console.log(msg);
         const messageList = document.getElementById("message-list");
-        const newMessage = document.createElement("li");
-        newMessage.textContent = msg;
+        const item = document.createElement("li");
 
-        messageList.appendChild(newMessage);
+        const header = document.createElement("div");
+        header.classList.add("message-header");
+        header.textContent = chatObj.time;
+
+        const body = document.createElement("div");
+        body.classList.add("message-body");
+        body.textContent = chatObj.message;
+
+        item.appendChild(header);
+        item.appendChild(body);
+
+
+        messageList.appendChild(item);
         
     });
     
