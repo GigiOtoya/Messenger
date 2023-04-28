@@ -42,6 +42,13 @@ body {
     position: relative;
 }
 
+.items {
+    list-style-type: none;
+    background-color: rgb(16, 16, 16);
+    color: white;
+    border-radius: 5px;
+}
+
 .text-container {
     display: flex;
     flex-direction: column;

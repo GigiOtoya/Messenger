@@ -16,7 +16,16 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-} )
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+    
+    socket.on('message', (msg) => {
+        console.log(msg);
+        io.emit('message', msg);
+    });
+
+});
 
 io.on("connect_error", (err) => {
     console.log(`connect_error due to ${err.message}`);
