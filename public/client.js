@@ -22,7 +22,17 @@
 
         const header = document.createElement("div");
         header.classList.add("message-header");
-        header.textContent = chatObj.time;
+
+        const user = document.createElement("span");
+        user.classList.add("header-user");
+        user.textContent = "user";
+
+        const timeStamp = document.createElement("span");
+        timeStamp.classList.add("header-time");
+        timeStamp.textContent = chatObj.time;
+
+        header.appendChild(user);
+        header.appendChild(timeStamp);
 
         const body = document.createElement("div");
         body.classList.add("message-body");

@@ -60,6 +60,16 @@ body {
 
 .message-header {
     padding: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-user {
+    color: aquamarine;
+    font-style: italic;
+}
+.header-time {
+    color: aqua;
 }
 
 .message-body {
