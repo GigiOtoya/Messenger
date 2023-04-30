@@ -31,20 +31,36 @@ body {
 
 .container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background-color: rgb(8, 8, 8);
     margin: auto;
     box-sizing: border-box;
-    padding: 30px;
+    margin-top: 10vh;
+    width: 1000px;
+    height: 600px;
+}
+
+#left-panel {
+    width: 200px;
+    height: 100%;
+    background-color: rgb(23, 29, 43);
+}
+
+#right-panel {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(34, 42, 63);
+    border-start-end-radius: 10px;
+    border-end-end-radius: 10px;
     width: 800px;
-    max-width: 100%;
-    position: relative;
+
+}
+
+.items-container {
+    height: 450px;
+    overflow-y: auto;
 }
 
 .items {
     list-style-type: none;
-    background-color: rgb(16, 16, 16);
     color: white;
     border-radius: 5px;
     padding-left: 0;
@@ -68,6 +84,7 @@ body {
     color: aquamarine;
     font-style: italic;
 }
+
 .header-time {
     color: aqua;
 }
@@ -82,10 +99,8 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    background-color: white;
-    background-color: transparent;
+    height: 150px;
     box-sizing: border-box;
-    bottom: 0;
     padding: 10px;
 }
 
@@ -98,9 +113,9 @@ body {
     box-sizing: border-box;
     border-radius: 5px;
     padding: 10px;
-    background-color: rgb(16, 16, 16);
+    background-color: rgb(16, 19, 29);
     color: white;
-    resize: none;
+    resize: vertical;
 }
 
 .options-container {

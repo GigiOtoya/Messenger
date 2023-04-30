@@ -23,28 +23,30 @@
         </nav>
         <div class="container">
             
-            <div id="control-panel">
+            <div id="left-panel">
 
             </div>
 
-            <div id="messages" class="items-container">
-                <ol id="message-list" class="items">
-                </ol>
-            </div>
-
-            <div id="reply-box" class="text-container">
-                <label for="reply"> Chat: </label>
-                <textarea 
-                    id="textfield"
-                    minlength="1"
-                    name="reply"
-                    rows="3"
-                    placeholder="message..."></textarea>
-                <div class="options-container">
-                    <button id="post-btn"> Post </button>
+            <div id="right-panel">
+                <div id="messages" class="items-container">
+                    <ol id="message-list" class="items">
+                    </ol>
+                </div>
+    
+                <div id="reply-box" class="text-container">
+                    <label for="reply"> Chat: </label>
+                    <textarea 
+                        id="textfield"
+                        minlength="1"
+                        name="reply"
+                        rows="3"
+                        placeholder="message..."></textarea>
+                    <div class="options-container">
+                        <button id="post-btn"> Post </button>
+                    </div>
                 </div>
             </div>
-
+        
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script src="client.js" async defer></script>
