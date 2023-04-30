@@ -43,6 +43,7 @@
 
 
         messageList.appendChild(item);
+        item.scrollIntoView();
         
     });
     
