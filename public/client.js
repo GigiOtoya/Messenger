@@ -1,6 +1,44 @@
 (function() {
-    const socket = io();
+    requireUser();
 
+    function requireUser() {
+        const options = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }
+        fetch("/", options)
+            .then( res => {
+                console.log(res)
+                if (res.redirected) {
+                    window.location.replace(res.url);
+                }
+            })
+    }
+    
+    const logoutBtn = document.getElementById("logout-btn");
+
+    logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const options = {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        };
+        fetch("/", options)
+            .then( res => {
+                if (res.redirected) {
+                    window.location.replace(res.url);
+                }
+            })
+    })
+
+
+    const socket = io();
     const postBtn = document.getElementById("post-btn");
 
     postBtn.addEventListener("click", (e)=> {
@@ -25,7 +63,7 @@
 
         const user = document.createElement("span");
         user.classList.add("header-user");
-        user.textContent = "user";
+        user.textContent = chatObj.user;
 
         const timeStamp = document.createElement("span");
         timeStamp.classList.add("header-time");
