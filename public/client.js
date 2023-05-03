@@ -49,9 +49,17 @@
             socket.emit("message", textField.value);
             textField.value = "";
         }
-
+        textField.focus();
     });
 
+    // add new user to list
+    socket.on("login", (user) => {
+        const userlist = document.getElementById("user-list");
+        const newUser = document.createElement("li");
+        newUser.textContent = user;
+        console.log(user);
+        userlist.appendChild(newUser);
+    })
     // retrieve message from server
     socket.on("chat", (chatObj) => {
         // console.log(msg);

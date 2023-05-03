@@ -8,6 +8,11 @@ const { Server } = require('socket.io');
 const io = new Server(server);
 const port = 8080;
 
+// formatted timestamp
+function timeStamp() {
+    const dt = new Date();
+    return dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+}
 
 // middleware function to check if user is authenticated
 function requireUser(req, res, next) {
@@ -63,19 +68,21 @@ io.on('connection', (socket) => {
     console.log('a user connected');
     console.log(`user: ${session.user}`);
 
-    const dt = new Date();
-    const time = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
-    const chatObj = {
-        user: "SERVER", 
-        time: time,
-        message : `${session.user} has joined`
+    if (session.user) {
+        const chatObj = {
+            user: "SERVER", 
+            time: timeStamp(),
+            message : `${session.user} has joined`
+        }
+        io.emit('chat', chatObj);
+        io.emit('login', session.user);
     }
-    io.emit('chat', chatObj);
+
+    
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
-        const dt = new Date();
-        const time = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+        const time = timeStamp()
         const chatObj = {
             user: "SERVER", 
             time: time,
@@ -85,9 +92,8 @@ io.on('connection', (socket) => {
     });
     
     socket.on('message', (msg) => {
-        console.log(msg);
-        const dt = new Date();
-        const time = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+        console.log(`new message: ${msg}`);
+        const time = timeStamp();
         const chatObj = {
             user: session.user, 
             time: time, 
