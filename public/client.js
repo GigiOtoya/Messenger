@@ -4,6 +4,7 @@
     function requireUser() {
         const options = {
             method: "GET",
+            redirect: 'follow',
             headers: {
                 "Content-Type": "application/json"
             },
@@ -57,7 +58,6 @@
         const userlist = document.getElementById("user-list");
         const newUser = document.createElement("li");
         newUser.textContent = user;
-        console.log(user);
         userlist.appendChild(newUser);
     })
     // retrieve message from server
