@@ -26,9 +26,8 @@ function requireUser(req, res, next) {
     }
 }
 
-
 const db = new Database();
-db.dropTable(MESSAGES);
+// db.dropTable(MESSAGES);
 // parse incoming JSON requests
 app.use(express.json());
 app.use(sessionMiddleware);
@@ -40,9 +39,21 @@ app.get('/', requireUser, (req, res) => {
         time: "TEXT",
         body: "TEXT"
     });
-    
     res.sendFile('index.html', {root: '../public'});
 });
+
+app.get('/data', (req, res) => {
+    const sql = `SELECT * FROM ${MESSAGES}`;
+    db.query(sql)
+        .then(rows => {
+            res.json(rows);
+        })
+        .catch(err => {
+            console.error(`error: ${err}`);
+            res.status(500).send("Database query error");
+        });
+});
+
 // serve static files, html, css, js, etc...
 app.use(express.static(path.join(path.dirname(__dirname), 'public')));
 
