@@ -27,6 +27,7 @@ class Database {
         const sql = `INSERT INTO ${tableName} (${fieldString}) VALUES (${placeholders})`;
 
         this.db.run(sql, [...values]);
+        console.log(`New insertion in ${tableName}`);
     }
 
     query(sql, params = []) {
@@ -46,21 +47,5 @@ class Database {
         this.db.close();
     }
 }
-
-const db = new Database();
-
-db.createTable("messages", {
-    id: "INTEGER PRIMARY KEY AUTOINCREMENT",
-    user: "TEXT",
-    time: "TEXT",
-    body: "TEXT"
-});
-const fields = ["user", "time", "body"];
-const values = ["Luigi", "11:11:11", "test message"];
-db.insertToTable("messages", fields, values);
-// let promise = db.getTableCount("messages")
-// .then(results => {
-//     console.log(results);
-// })
 
 module.exports = Database;

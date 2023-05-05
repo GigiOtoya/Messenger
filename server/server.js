@@ -26,13 +26,12 @@ function requireUser(req, res, next) {
     }
 }
 
-const db = new Database();
-// db.dropTable(MESSAGES);
 // parse incoming JSON requests
 app.use(express.json());
 app.use(sessionMiddleware);
 
 app.get('/', requireUser, (req, res) => {
+    const db = new Database();
     db.createTable(MESSAGES, {
         id: "INTEGER PRIMARY KEY AUTOINCREMENT",
         user: "TEXT",
@@ -42,7 +41,8 @@ app.get('/', requireUser, (req, res) => {
     res.sendFile('index.html', {root: '../public'});
 });
 
-app.get('/data', (req, res) => {
+app.get('/data', requireUser, (req, res) => {
+    const db = new Database();
     const sql = `SELECT * FROM ${MESSAGES}`;
     db.query(sql)
         .then(rows => {
@@ -83,11 +83,11 @@ app.post('/', (req, res) => {
     });
 });
 
+// socket
 io.use(wrap(sessionMiddleware));
 io.on('connection', (socket) => {
     const session = socket.request.session;
-    console.log('a user connected');
-    console.log(`user: ${session.user}`);
+    console.log(`user ${session.user} has connected`);
 
     if (session.user) {
         const chatObj = {
@@ -118,12 +118,13 @@ io.on('connection', (socket) => {
                 time: time, 
                 message : msg
             };
+
             io.emit('chat', chatObj);
+
+            const db = new Database();
             const fields = ["user", "time", "body"];
             const values = [session.user, time, msg];
             db.insertToTable(MESSAGES, fields, values);
-            count = db.getTableCount(MESSAGES)
-            console.log(count);
         });
     }
 });
