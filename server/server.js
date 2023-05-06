@@ -9,6 +9,7 @@ const { Server } = require('socket.io');
 const io = new Server(server);
 const port = 8080;
 const MESSAGES = "messages";
+const USERS = "users";
 
 // formatted timestamp
 function timeStamp() {
@@ -32,19 +33,27 @@ app.use(sessionMiddleware);
 
 app.get('/', requireUser, (req, res) => {
     const db = new Database();
+    // db.dropTable(MESSAGES);
+    // db.dropTable(USERS);
+    db.createTable(USERS, {
+        id: "INTEGER PRIMARY KEY AUTOINCREMENT",
+        name: "TEXT"
+    })
+
     db.createTable(MESSAGES, {
         id: "INTEGER PRIMARY KEY AUTOINCREMENT",
         user: "TEXT",
         time: "TEXT",
         body: "TEXT"
     });
+
+    db.close();
     res.sendFile('index.html', {root: '../public'});
 });
 
-app.get('/data', requireUser, (req, res) => {
+app.get('/data', requireUser, async (req, res) => {
     const db = new Database();
-    const sql = `SELECT * FROM ${MESSAGES}`;
-    db.query(sql)
+    await db.query(`SELECT * FROM ${MESSAGES}`)
         .then(rows => {
             res.json(rows);
         })
@@ -52,6 +61,7 @@ app.get('/data', requireUser, (req, res) => {
             console.error(`error: ${err}`);
             res.status(500).send("Database query error");
         });
+    db.close();
 });
 
 // serve static files, html, css, js, etc...
@@ -72,6 +82,18 @@ app.post('/login', (req, res) => {
     };
 });
 
+app.get('/users', async (req, res) => {
+    const db = new Database();
+    await db.query(`SELECT * FROM ${USERS}`)
+        .then(rows => {
+            res.json(rows);
+        })
+        .catch(err => {
+            console.error(`error: ${err}`)
+            res.status(500).send("Database query error");
+        })
+})
+
 app.post('/', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -90,36 +112,32 @@ io.on('connection', (socket) => {
     console.log(`user ${session.user} has connected`);
 
     if (session.user) {
-        const chatObj = {
-            user: "SERVER", 
-            time: timeStamp(),
-            message : `${session.user} has joined`
-        }
-        io.emit('chat', chatObj);
-        io.emit('login', session.user);
-        io.emit('history');
-    
+        // update userslist on login
+        const message = makeMessage("SERVER", `${session.user} has joined`);
+        const db = new Database();
+        db.insertToTable(USERS, ["name"], [session.user]);
+        io.emit('login', message);
+        io.emit('updateUsers');
 
+        // io.emit('login', message);
+
+        // update userslist on logout
         socket.on('disconnect', () => {
             console.log('user disconnected');
-            const chatObj = {
-                user: "SERVER", 
-                time: timeStamp(),
-                message : `${session.user} has left`
-            }
-            io.emit('chat', chatObj);
+            const message = makeMessage("SERVER", `${session.user} has left`)
+
+            const db = new Database();
+            db.deleteFromTable(USERS, ["name"], [session.user]);
+            io.emit('chat', message);
+            io.emit('updateUsers');
         });
         
+        // send message to client
         socket.on('message', (msg) => {
-            console.log(`new message: ${msg}`);
             const time = timeStamp();
-            const chatObj = {
-                user: session.user, 
-                time: time, 
-                message : msg
-            };
+            const message = makeMessage(session.user, msg, time);
 
-            io.emit('chat', chatObj);
+            io.emit('chat', message);
 
             const db = new Database();
             const fields = ["user", "time", "body"];
@@ -136,3 +154,11 @@ io.on("connect_error", (err) => {
 server.listen(port, ()=> {
     console.log(`listening on port ${port}`);
 });
+
+function makeMessage(user, message, time=timeStamp()) {
+    return {
+        user: user,
+        time: time,
+        body: message
+    }
+}

@@ -27,7 +27,11 @@ class Database {
         const sql = `INSERT INTO ${tableName} (${fieldString}) VALUES (${placeholders})`;
 
         this.db.run(sql, [...values]);
-        console.log(`New insertion in ${tableName}`);
+        console.log(`New entry in table: ${tableName}`);
+    }
+
+    deleteFromTable(tableName, field, value) {
+        this.db.run(`DELETE FROM ${tableName} WHERE ${field}="${value}";`);
     }
 
     query(sql, params = []) {
