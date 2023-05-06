@@ -31,25 +31,10 @@ function requireUser(req, res, next) {
 app.use(express.json());
 app.use(sessionMiddleware);
 
+
 app.get('/', requireUser, (req, res) => {
-    const db = new Database();
-    // db.dropTable(MESSAGES);
-    // db.dropTable(USERS);
-    db.createTable(USERS, {
-        id: "INTEGER PRIMARY KEY AUTOINCREMENT",
-        name: "TEXT"
-    })
-
-    db.createTable(MESSAGES, {
-        id: "INTEGER PRIMARY KEY AUTOINCREMENT",
-        user: "TEXT",
-        time: "TEXT",
-        body: "TEXT"
-    });
-
-    db.close();
-    res.sendFile('index.html', {root: '../public'});
-});
+    res.sendFile('index.html', {root: '../'});
+})
 
 app.get('/data', requireUser, async (req, res) => {
     const db = new Database();
@@ -82,7 +67,7 @@ app.post('/login', (req, res) => {
     };
 });
 
-app.get('/users', async (req, res) => {
+app.get('/users', requireUser, async (req, res) => {
     const db = new Database();
     await db.query(`SELECT * FROM ${USERS}`)
         .then(rows => {
@@ -123,7 +108,7 @@ io.on('connection', (socket) => {
 
         // update userslist on logout
         socket.on('disconnect', () => {
-            console.log('user disconnected');
+            console.log(`user ${session.user} has diconnected`);
             const message = makeMessage("SERVER", `${session.user} has left`)
 
             const db = new Database();

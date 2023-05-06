@@ -12,8 +12,8 @@ class Database {
 
         const createTableSql = `CREATE TABLE IF NOT EXISTS ${tableName} (${fieldString})`;
         this.db.run(createTableSql);
-
         console.log(`${tableName} table created`);
+
     }
 
     dropTable(tableName) {
@@ -52,4 +52,20 @@ class Database {
     }
 }
 
+const db = new Database();
+// db.dropTable(MESSAGES);
+// db.dropTable(USERS);
+db.createTable("users", {
+    id: "INTEGER PRIMARY KEY AUTOINCREMENT",
+    name: "TEXT"
+})
+
+db.createTable("messages", {
+    id: "INTEGER PRIMARY KEY AUTOINCREMENT",
+    user: "TEXT",
+    time: "TEXT",
+    body: "TEXT"
+});
+
+db.close();
 module.exports = Database;

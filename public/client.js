@@ -110,14 +110,6 @@
         textField.focus();
     });
 
-    // add new user to list
-    // socket.on("login", (user) => {
-    //     const userlist = document.getElementById("user-list");
-    //     const newUser = document.createElement("li");
-    //     newUser.textContent = user;
-    //     userlist.appendChild(newUser);
-    // })
-
     // retrieve message from server
     socket.on("chat", (message) => {
         displayMessage(message);
@@ -137,7 +129,6 @@
             .then(res => res.json())
             .then(users => {
                 users.forEach(user => {
-                    console.log(user);
                     displayUser(user.name);
                 })
             })
