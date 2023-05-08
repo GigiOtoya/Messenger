@@ -5,35 +5,66 @@ class Database {
         this.db = new sqlite3.Database("database.db");
     }
 
-    createTable(tableName, fields) {
+    async createTable(tableName, fields) {
         const fieldString = Object.entries(fields).map(([fieldName, fieldType]) => {
             return `${fieldName} ${fieldType}`;
         }).join(', ');
 
-        const createTableSql = `CREATE TABLE IF NOT EXISTS ${tableName} (${fieldString})`;
-        this.db.run(createTableSql);
-        console.log(`${tableName} table created`);
-
+        const sql = `CREATE TABLE IF NOT EXISTS ${tableName} (${fieldString})`;
+        try {
+            const result = await this.executeNonQuery(sql);
+            console.log(`Table ${tableName} created with result ${result}`);
+        }
+        catch (err) {
+            console.error(`Error creating table ${tableName}: ${err}`);
+        }
+        // this.db.run(sql);
+        // console.log(`${tableName} table created`);
     }
 
-    dropTable(tableName) {
-        this.db.run(`DROP TABLE IF EXISTS ${tableName}`);
-        console.log(`${tableName} table dropped if exists`);
+    async dropTable(tableName) {
+        const sql = `DROP TABLE IF EXISTS ${tableName}`;
+        try {
+            const result = await this.executeNonQuery(sql);
+            console.log(`Table ${tableName} deleted with result ${result}`);
+        }
+        catch (err) {
+            console.error(`Error deleting table ${tableName}: ${err}`);
+        }
+
+        // this.db.run(sql);
+        // console.log(`${tableName} table dropped if exists`);
     }
 
-    insertToTable(tableName, fields, values) {
+    async insertToTable(tableName, fields, values) {
         const fieldString = fields.join(", ");
         const placeholders = fields.map(() => "?").join(", ");
         const sql = `INSERT INTO ${tableName} (${fieldString}) VALUES (${placeholders})`;
 
-        this.db.run(sql, [...values]);
-        console.log(`New entry in table: ${tableName}`);
+        try {
+            const result = await this.executeNonQuery(sql, [...values]);
+            console.log(`Inserted to table ${tableName} with result ${result}`);
+        }
+        catch (err) {
+            console.error(`Error inserting to table ${tableName}: ${err}`);
+        }
+        // this.db.run(sql, [...values]);
+        // console.log(`New entry in table: ${tableName}`);
     }
 
-    deleteFromTable(tableName, field, value) {
-        this.db.run(`DELETE FROM ${tableName} WHERE ${field}="${value}";`);
+    async deleteFromTable(tableName, field, value) {
+        const sql = `DELETE FROM ${tableName} WHERE ${field}="${value}";`
+        try {
+            const result = await this.executeNonQuery(sql);
+            console.log(`Deleted from table ${tableName} with result ${result}`);
+        }
+        catch (err) {
+            console.error(`Error deleting from table ${tableName}: ${err}`);
+        }
+        // this.db.run(`DELETE FROM ${tableName} WHERE ${field}="${value}";`);
     }
 
+    // returns a promise
     query(sql, params = []) {
         return new Promise((res, rej) => {
             this.db.all(sql, params, (err, rows) => {
@@ -47,14 +78,26 @@ class Database {
         });
     }
 
+    executeNonQuery(sql, params = []) {
+        return new Promise((resolve, reject) => {
+            this.db.run(sql, params, function(err) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(this.lastID || this.changes);
+                }
+            });
+        });
+    }
+
     close() {
         this.db.close();
     }
 }
 
 const db = new Database();
-// db.dropTable(MESSAGES);
-// db.dropTable(USERS);
+
 db.createTable("users", {
     id: "INTEGER PRIMARY KEY AUTOINCREMENT",
     name: "TEXT"

@@ -76,7 +76,8 @@ app.get('/users', requireUser, async (req, res) => {
         .catch(err => {
             console.error(`error: ${err}`)
             res.status(500).send("Database query error");
-        })
+        });
+    db.close();
 })
 
 app.post('/', (req, res) => {
@@ -92,42 +93,48 @@ app.post('/', (req, res) => {
 
 // socket
 io.use(wrap(sessionMiddleware));
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     const session = socket.request.session;
-    console.log(`user ${session.user} has connected`);
+    console.log('New connection');
 
     if (session.user) {
         // update userslist on login
-        const message = makeMessage("SERVER", `${session.user} has joined`);
         const db = new Database();
-        db.insertToTable(USERS, ["name"], [session.user]);
+        await db.insertToTable(USERS, ["name"], [session.user]);
+        db.close();
+
+        console.log(`${session.user} has connected`); 
+        const message = makeMessage("SERVER", `${session.user} has joined`);
+
         io.emit('login', message);
         io.emit('updateUsers');
 
-        // io.emit('login', message);
-
         // update userslist on logout
-        socket.on('disconnect', () => {
+        socket.on('disconnect', async () => {
+            const db = new Database();
+            await db.deleteFromTable(USERS, ["name"], [session.user]);
+            db.close();
+
             console.log(`user ${session.user} has diconnected`);
             const message = makeMessage("SERVER", `${session.user} has left`)
 
-            const db = new Database();
-            db.deleteFromTable(USERS, ["name"], [session.user]);
             io.emit('chat', message);
             io.emit('updateUsers');
         });
         
         // send message to client
-        socket.on('message', (msg) => {
+        socket.on('message', async (msg) => {
             const time = timeStamp();
-            const message = makeMessage(session.user, msg, time);
-
-            io.emit('chat', message);
-
-            const db = new Database();
             const fields = ["user", "time", "body"];
             const values = [session.user, time, msg];
-            db.insertToTable(MESSAGES, fields, values);
+
+            const db = new Database();
+            await db.insertToTable(MESSAGES, fields, values);
+            db.close();
+
+            const message = makeMessage(session.user, msg, time);
+            
+            io.emit('chat', message);  
         });
     }
 });
