@@ -18,8 +18,6 @@ class Database {
         catch (err) {
             console.error(`Error creating table ${tableName}: ${err}`);
         }
-        // this.db.run(sql);
-        // console.log(`${tableName} table created`);
     }
 
     async dropTable(tableName) {
@@ -31,9 +29,6 @@ class Database {
         catch (err) {
             console.error(`Error deleting table ${tableName}: ${err}`);
         }
-
-        // this.db.run(sql);
-        // console.log(`${tableName} table dropped if exists`);
     }
 
     async insertToTable(tableName, fields, values) {
@@ -48,8 +43,6 @@ class Database {
         catch (err) {
             console.error(`Error inserting to table ${tableName}: ${err}`);
         }
-        // this.db.run(sql, [...values]);
-        // console.log(`New entry in table: ${tableName}`);
     }
 
     async deleteFromTable(tableName, field, value) {
@@ -61,7 +54,6 @@ class Database {
         catch (err) {
             console.error(`Error deleting from table ${tableName}: ${err}`);
         }
-        // this.db.run(`DELETE FROM ${tableName} WHERE ${field}="${value}";`);
     }
 
     // returns a promise
