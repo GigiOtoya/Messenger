@@ -88,19 +88,20 @@ class Database {
     }
 }
 
-const db = new Database();
+// const db = new Database();
+// db.dropTable("users");
+// db.dropTable("messages");
+// db.createTable("users", {
+//     id: "INTEGER PRIMARY KEY AUTOINCREMENT",
+//     name: "TEXT"
+// })
 
-db.createTable("users", {
-    id: "INTEGER PRIMARY KEY AUTOINCREMENT",
-    name: "TEXT"
-})
+// db.createTable("messages", {
+//     id: "INTEGER PRIMARY KEY AUTOINCREMENT",
+//     user: "TEXT",
+//     time: "TEXT",
+//     body: "TEXT"
+// });
 
-db.createTable("messages", {
-    id: "INTEGER PRIMARY KEY AUTOINCREMENT",
-    user: "TEXT",
-    time: "TEXT",
-    body: "TEXT"
-});
-
-db.close();
+// db.close();
 module.exports = Database;

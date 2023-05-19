@@ -16,4 +16,4 @@ This project implements websockets to enable real-time communication between cli
 2. npm run dev
 3. go to localhost:8080
 
-<img src='walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='image.png' title='preview' width='' alt='image' />
