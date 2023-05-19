@@ -9,6 +9,7 @@ This project implements websockets to enable real-time communication between cli
 1. git clone https://github.com/GigiOtoya/Messenger.git
 2. cd server
 3. npm install
+4. create .env and set environment variable SECRET = "your choice"
 
 ## usage
 1. cd server
